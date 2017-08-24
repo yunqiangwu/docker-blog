@@ -7,7 +7,7 @@ RUN apt-get install -y unzip wget python gcc make g++
 
 RUN  cd /tmp; \
 	wget https://npm.taobao.org/mirrors/node/v4.2.0/node-v4.2.0.tar.gz; \
-	tar zxvf node-v4.2.0.tar.gz; \
+	tar zxf node-v4.2.0.tar.gz; \
 	cd node-v4.2.0; \
 	 ./configure; \
 	 make ; \
@@ -31,8 +31,8 @@ ENV GHOST_VERSION 0.7.4-zh-full
 
 
 
-RUN npm install -g cnpm
-RUN cnpm install -g "ghost-cli@$GHOST_CLI_VERSION" knex-migrator@latest
+#RUN npm install -g cnpm
+RUN npm install -g "ghost-cli@$GHOST_CLI_VERSION" knex-migrator@latest
 
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
