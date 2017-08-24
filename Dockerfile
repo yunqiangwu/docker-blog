@@ -45,6 +45,7 @@ RUN set -ex; \
 
 RUN unzip /tmp/ghost.zip -d $GHOST_INSTALL
 
+RUN ln -s /opt/node-v4.2.0/out/bin/ghost /usr/local/bin/ghost
 
 #	ghost install "$GHOST_VERSION" --db sqlite3 --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"; \
 # Tell Ghost to listen on all ips and not prompt for additional configuration
