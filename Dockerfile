@@ -5,8 +5,8 @@ FROM ubuntu
 RUN apt-get update
 RUN apt-get install -y unzip wget python gcc make g++
 
-ENV NODE_VERSION 8.4.0
-
+ENV NODE_VERSION 6.5.0
+# https://npm.taobao.org/mirrors/node/latest/node-v6.5.0.tar.gz
 
 RUN  cd /tmp; \
 	wget https://npm.taobao.org/mirrors/node/latest/node-v${NODE_VERSION}.tar.gz; \
@@ -52,9 +52,9 @@ RUN unzip /tmp/ghost.zip -d $GHOST_INSTALL
 RUN	cd "$GHOST_INSTALL"; \
 	ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
 	ghost config paths.contentPath "$GHOST_CONTENT"; \
-	mv "$GHOST_CONTENT" "$GHOST_INSTALL/content.orig"; \  
-	mkdir -p "$GHOST_CONTENT"; \
-	chown node:node "$GHOST_CONTENT"
+	mv "$GHOST_CONTENT" "$GHOST_INSTALL/content.orig"; \
+	mkdir -p "$GHOST_CONTENT";
+#	chown node:node "$GHOST_CONTENT"
 
 WORKDIR $GHOST_INSTALL
 VOLUME $GHOST_CONTENT
