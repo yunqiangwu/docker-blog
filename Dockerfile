@@ -33,7 +33,8 @@ RUN mv "/tmp/node-${NODE_VERSION}" /opt/ ; \
 ENV PATH ${PATH}:/opt/node-${NODE_VERSION}/out/bin
 
 RUN npm install -g yarn --registry=https://registry.npm.taobao.org
-
+RUN yarn global add n \
+	&& n 4.2.0
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_ENV production
@@ -60,15 +61,17 @@ RUN unzip /tmp/ghost.zip -d "$GHOST_INSTALL"
 # Tell Ghost to listen on all ips and not prompt for additional configuration
 
 
+
+
 WORKDIR $GHOST_INSTALL
-RUN	 ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
-	ghost config paths.contentPath "$GHOST_CONTENT"; \
-	mv "$GHOST_CONTENT" "$GHOST_INSTALL/content.orig"; \
-	mkdir -p "$GHOST_CONTENT";
+RUN	 ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 
+#--dbpath "$GHOST_CONTENT/data/ghost.db"; \
+#	ghost config paths.contentPath "$GHOST_CONTENT"; \
+#	mv "$GHOST_CONTENT" "$GHOST_INSTALL/content.orig"; \
+#	mkdir -p "$GHOST_CONTENT";
 #	chown node:node "$GHOST_CONTENT"
 
-RUN yarn global add n \
-	&& n 4.2.0
+
 
 VOLUME $GHOST_CONTENT
 
