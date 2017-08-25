@@ -33,8 +33,7 @@ RUN mv "/tmp/node-${NODE_VERSION}" /opt/ ; \
 ENV PATH ${PATH}:/opt/node-${NODE_VERSION}/out/bin
 
 RUN npm install -g yarn --registry=https://registry.npm.taobao.org
-RUN yarn global add n \
-	&& n 4.2.0
+
 
 ENV NPM_CONFIG_LOGLEVEL warn
 ENV NODE_ENV production
@@ -46,14 +45,15 @@ ENV GHOST_VERSION 0.7.4-zh-full
 
 RUN yarn global add "ghost-cli@$GHOST_CLI_VERSION" knex-migrator@latest
 
+
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
 
 RUN set -ex; \
-	mkdir -p "$GHOST_INSTALL"; \
-	wget -O /tmp/ghost.zip "http://dl.ghostchina.com/Ghost-${GHOST_VERSION}.zip" 
+	mkdir -p "$GHOST_INSTALL"
+#	wget -O /tmp/ghost.zip "http://dl.ghostchina.com/Ghost-${GHOST_VERSION}.zip" 
 
-RUN unzip /tmp/ghost.zip -d "$GHOST_INSTALL"
+#RUN unzip /tmp/ghost.zip -d "$GHOST_INSTALL"
 
 # RUN ln -s /opt/node-v4.2.0/out/bin/ghost /usr/local/bin/ghost
 
@@ -62,9 +62,10 @@ RUN unzip /tmp/ghost.zip -d "$GHOST_INSTALL"
 
 
 
+# RUN yarn global add n && n 4.2.0
 
 WORKDIR $GHOST_INSTALL
-RUN	 ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 
+RUN	 ghost install local --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 
 #--dbpath "$GHOST_CONTENT/data/ghost.db"; \
 #	ghost config paths.contentPath "$GHOST_CONTENT"; \
 #	mv "$GHOST_CONTENT" "$GHOST_INSTALL/content.orig"; \
