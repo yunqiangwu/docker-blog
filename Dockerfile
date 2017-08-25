@@ -32,7 +32,7 @@ RUN mv "/tmp/node-${NODE_VERSION}" /opt/ ; \
 
 ENV PATH ${PATH}:/opt/node-${NODE_VERSION}/out/bin
 
-RUN npm install -g cnpm --registry=https://registry.npm.taobao.org
+RUN npm install -g yarn --registry=https://registry.npm.taobao.org
 
 
 ENV NPM_CONFIG_LOGLEVEL warn
@@ -43,9 +43,9 @@ ENV GHOST_CLI_VERSION latest
 ENV GHOST_VERSION 0.7.4-zh-full
 
 
-RUN npm install -g "ghost-cli@$GHOST_CLI_VERSION" knex-migrator@latest
+RUN yarn global add "ghost-cli@$GHOST_CLI_VERSION" knex-migrator@latest
 
-ENV GHOST_INSTALL /var/lib/ghost
+ENV GHOST_INSTALL /var/l ib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
 
 RUN set -ex; \
@@ -67,7 +67,9 @@ RUN	 ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http:/
 	mkdir -p "$GHOST_CONTENT";
 #	chown node:node "$GHOST_CONTENT"
 
-WORKDIR $GHOST_INSTALL
+RUN yarn global add n \
+	&& n 4.2.0
+
 VOLUME $GHOST_CONTENT
 
 COPY docker-entrypoint.sh /usr/local/bin
