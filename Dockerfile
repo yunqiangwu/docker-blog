@@ -45,7 +45,7 @@ ENV GHOST_VERSION 0.7.4-zh-full
 
 RUN yarn global add "ghost-cli@$GHOST_CLI_VERSION" knex-migrator@latest
 
-ENV GHOST_INSTALL /var/l ib/ghost
+ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
 
 RUN set -ex; \
