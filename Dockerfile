@@ -1,24 +1,36 @@
-# https://docs.ghost.org/supported-node-versions/
-# https://github.com/nodejs/LTS
-FROM ubuntu
+FROM ubuntu:16.04
+MAINTAINER qiangyun.wu 842269153@qq.com
 
-RUN apt-get update
-RUN apt-get install -y unzip wget python gcc make g++
+
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  unzip \
+  wget \
+  python \
+  gcc \
+  make \
+  g++ \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_VERSION 6.5.0
-# https://npm.taobao.org/mirrors/node/latest/node-v6.5.0.tar.gz
+# https://npm.taobao.org/mirrors/node/v6.5.0/node-v6.5.0.tar.gz
+# https://github.com/nodejs/node/archive/v8.1.2.tar.gz
+# node-6.5.0
+WORKDIR /tmp
+RUN  wget --no-check-certificate -O node.tar.gz  "https://github.com/nodejs/node/archive/v${NODE_VERSION}.tar.gz" \
+	&& mkdir -p /tmp/node \
+	&& tar zxf node.tar.gz -C /tmp
 
-RUN  cd /tmp; \
-	wget https://npm.taobao.org/mirrors/node/latest/node-v${NODE_VERSION}.tar.gz; \
-	tar zxf node-v${NODE_VERSION}.tar.gz; \
-	cd node-v${NODE_VERSION}; \
-	 ./configure; \
-	 make ; \
-	cd .. && mv node-v${NODE_VERSION} /opt/ ; \
-	ln -s /opt/node-v${NODE_VERSION}/node /usr/local/bin/node; \
-	ln -s /opt/node-v${NODE_VERSION}/deps/npm/bin/npm-cli.js /usr/local/bin/npm
+WORKDIR /tmp/node-${NODE_VERSION}
+RUN ls -la
+RUN  ./configure && make
 
-ENV PATH ${PATH}:/opt/node-v${NODE_VERSION}out/bin
+RUN mv "/tmp/node-${NODE_VERSION}" /opt/ ; \
+	ln -s "/opt/node-${NODE_VERSION}/node" /usr/local/bin/node; \
+	ln -s "/opt/node-${NODE_VERSION}/deps/npm/bin/npm-cli.js" /usr/local/bin/npm
+
+ENV PATH ${PATH}:/opt/node-${NODE_VERSION}/out/bin
 
 RUN npm install -g cnpm --registry=https://registry.npm.taobao.org
 
@@ -38,10 +50,9 @@ ENV GHOST_CONTENT /var/lib/ghost/content
 
 RUN set -ex; \
 	mkdir -p "$GHOST_INSTALL"; \
-#	chown node:node "$GHOST_INSTALL"; \
-	wget -O /tmp/ghost.zip http://dl.ghostchina.com/Ghost-${GHOST_VERSION}.zip 
+	wget -O /tmp/ghost.zip "http://dl.ghostchina.com/Ghost-${GHOST_VERSION}.zip" 
 
-RUN unzip /tmp/ghost.zip -d $GHOST_INSTALL
+RUN unzip /tmp/ghost.zip -d "$GHOST_INSTALL"
 
 # RUN ln -s /opt/node-v4.2.0/out/bin/ghost /usr/local/bin/ghost
 
@@ -49,8 +60,8 @@ RUN unzip /tmp/ghost.zip -d $GHOST_INSTALL
 # Tell Ghost to listen on all ips and not prompt for additional configuration
 
 
-RUN	cd "$GHOST_INSTALL"; \
-	ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
+WORKDIR $GHOST_INSTALL
+RUN	 ghost config --ip 0.0.0.0 --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
 	ghost config paths.contentPath "$GHOST_CONTENT"; \
 	mv "$GHOST_CONTENT" "$GHOST_INSTALL/content.orig"; \
 	mkdir -p "$GHOST_CONTENT";
